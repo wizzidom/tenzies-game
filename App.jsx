@@ -1,9 +1,17 @@
 import Die from "./Die";
 import React from "react";
 import { nanoid } from "nanoid";
+import ReactConfetti from "react-confetti";
 
 export default function App() {
-  const [dice, setDices] = React.useState(generateAllNewDice());
+  const [dice, setDices] = React.useState(() => generateAllNewDice());
+  let gameWon = false;
+  if (
+    dice.every((die) => die.isHeld) &&
+    dice.every((die) => die.value === dice[0].value)
+  ) {
+    gameWon = true;
+  }
 
   function generateAllNewDice() {
     let arrayDice = [];
@@ -16,7 +24,9 @@ export default function App() {
   function rollDice() {
     setDices((oldDice) =>
       oldDice.map((die) =>
-        !die.isHeld ? { ...die, value: Math.floor(Math.random() * 6) + 1 } : die
+        !die.isHeld || gameWon
+          ? { ...die, value: Math.floor(Math.random() * 6) + 1, isHeld: false }
+          : die
       )
     );
   }
@@ -36,13 +46,14 @@ export default function App() {
       isHeld={die.isHeld}
       hold={() => {
         hold(die.id);
-        console.log(die);
       }}
     />
   ));
 
   return (
     <main>
+      {gameWon && <ReactConfetti />}
+
       <div className="game-container">
         <h1>Tenzies</h1>
         <p>
@@ -50,7 +61,7 @@ export default function App() {
           current value between rolls
         </p>
         <div className="grid-layout">{diceElements}</div>
-        <button onClick={rollDice}>Roll</button>
+        <button onClick={rollDice}>{gameWon ? "New Game" : "Roll"}</button>
       </div>
     </main>
   );

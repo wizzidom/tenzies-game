@@ -49,7 +49,7 @@ main {
   border: none;
   box-shadow: black 1px 3px 5px -5px;
   height: 50px;
-  width: 100px;
+  min-width: 100px;
   cursor: pointer;
   border-radius: 6px;
   font-size: 1.5em;
